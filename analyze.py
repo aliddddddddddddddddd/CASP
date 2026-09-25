@@ -209,7 +209,9 @@ def main():
         for i in range(M.shape[0]):
             for j in range(M.shape[1]):
                 if np.isfinite(M[i, j]):
-                    ax.text(j, i, f"{M[i, j]:+.3f}{'*' if S[i, j] else ''}", ha="center", va="center", fontsize=7)
+                    ax.text(j, i, f"{M[i, j]:+.3f}{'*' if S[i, j] else ''}", ha="center", va="center", fontsize=7,
+                            color="white" if abs(M[i, j]) > 0.5 * lim else "black",
+                            fontweight="bold" if S[i, j] else "normal")
         ax.set_xticks(range(len(cols))); ax.set_xticklabels([COND_LABEL[c] for c in cols], rotation=30, ha="right")
         ax.set_yticks(range(len(rows_lbl))); ax.set_yticklabels(rows_lbl, fontsize=7)
         ax.set_title("Score of Full CASP minus score of each condition\n(positive = component helps; * Holm-adjusted p < 0.05)", fontsize=8)
