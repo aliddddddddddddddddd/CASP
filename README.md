@@ -1,120 +1,126 @@
-# How to run the experiment (Windows) - step by step
+# CASP: Constitutional AI-Aligned Structured Prompting
 
-Follow the steps in order. Every grey box is one command: copy it, paste it, press **Enter**, and wait until it finishes before the next one.
+Code, data and raw model outputs for the paper
+**"Structural Prompt Engineering in Constitutional AI Models: A Technical Analysis of Claude's Techniques."**
 
----
+CASP is a four-component prompting procedure for Claude: (R) role and context framing,
+(X) XML input structuring, (C) explicit step-by-step reasoning and (O) output control,
+with prompt caching for reused contexts. The paper specifies it as Algorithm 1 and evaluates it
+with a leave-one-out ablation study. This repository contains everything needed to inspect the
+reported run, regenerate every table and figure in Section 5 of the paper, and repeat or extend
+the experiment.
 
-## Step 1 - Unzip the kit
+## The reported run at a glance
 
-1. Right-click `casp_experiment_kit.zip` and choose **Extract All...**, then click **Extract**.
-2. Open the extracted folder, then open the folder named **casp_experiment** inside it.
-3. You are in the right folder when you can see the files `run_experiment.py`, `analyze.py` and `README.md`.
+| Setting | Value |
+|---|---|
+| Model | Claude Sonnet 4.6 (`claude-sonnet-4-6`) |
+| Output control | Structured outputs (`output_config.format`); prefill is rejected by this model (HTTP 400) |
+| Tasks | T1 entity extraction (CoNLL-2003), T1i extraction with an embedded conflicting instruction, T2 arithmetic reasoning (GSM8K) |
+| Items | First 50 items of each task file (T1 items contain 148 gold entities) |
+| Conditions | T1/T1i: B0, FULL, −R, −X, −O. T2: B0, FULL, −R, −X, −C, −O |
+| Repetitions | 1 per item and condition |
+| Caching experiment (E3) | First 30 T1 items, each run once with and once without a cacheable ~5,000-token context |
+| Total calls | 50 × (5 + 5 + 6) = 800, plus 60 for E3 = **860** |
+| Sampling settings | Temperature not set (API default 1.0); `max_tokens` = 1000; `thinking` parameter not sent |
+| Date | 22 September 2026, 16:06-21:56 UTC |
 
----
+The calls were sent to the Anthropic Messages API from **`casp_runner.html`**, a Claude.ai
+artifact that runs under a Claude.ai subscription rather than a separate API key. Its prompt
+builder is a line-by-line port of `casp/prompts.py`, and it embeds the same items as `data/`.
 
-## Step 2 - Open PowerShell inside that folder
-
-While you are inside the **casp_experiment** folder in File Explorer:
-
-1. Click once on the **address bar** at the top of the window (where the folder path is shown).
-2. Delete the text, type `powershell`, and press **Enter**.
-
-A blue or black window opens. This is where you paste every command below.
-Its first line should end with `\casp_experiment>`, which means it is already in the right folder.
-
-**How to paste:** press **Ctrl + V** or right-click inside the window, then press **Enter**.
-
----
-
-## Step 3 - Check that Python is installed
-
-```
-python --version
-```
-
-- If you see something like `Python 3.12.x`, go to Step 4.
-- If you see an error: install Python from https://www.python.org/downloads/ and tick the box **"Add python.exe to PATH"** during installation. Then close PowerShell and repeat Step 2.
-
----
-
-## Step 4 - Install the required libraries (only once)
+## Repository layout
 
 ```
+casp_runner.html          In-browser runner used for the reported run (Claude.ai artifact)
+score_runner_results.py   Scores the runner's export so analyze.py can read it
+run_experiment.py         Equivalent command-line runner (Anthropic / OpenAI / Gemini APIs)
+analyze.py                Tables (CSV, Markdown) and figures (PNG, 300 dpi)
+models.json               Model configurations and prices used for cost figures
+casp/
+  prompts.py              Algorithm 1: prompt construction for every condition
+  scoring.py              Automatic, gold-based scoring (no human rating)
+  backends.py             API clients (Anthropic, OpenAI, Gemini, mock)
+  datasets.py             Deterministic construction of the evaluation sets (seed 2026)
+data/
+  extraction.jsonl        T1 items (100 sampled; the first 50 were used)
+  extraction_injected.jsonl  T1i items
+  gsm8k.jsonl             T2 items
+  caching_context.txt     Fixed guideline + 60 demonstrations used in E3
+results/
+  casp_results.jsonl      Raw export of the reported run (860 calls + metadata line)
+```
+
+## Reproduce the paper's tables and figures (no API access needed)
+
+Requires Python 3.10+.
+
+```bash
 pip install -r requirements.txt
+python score_runner_results.py        # results/casp_results.jsonl -> results/raw_claude-sonnet-4-6.jsonl
+python analyze.py --results results   # writes results/analysis/
 ```
 
----
+`results/analysis/` then contains `summary.csv` (Table 6), `stats.csv` (Table 7),
+`caching.csv` (Table 8), `report.md` and the figures `Fig_main_results.png`,
+`Fig_format_compliance.png`, `Fig_ablation_delta.png`, `Fig_injection.png` and `Fig_caching.png`
+(Figures 7-11). Key values you should obtain: T1 FULL typed F1 = 0.855 vs B0 = 0.000;
+T2 accuracy 0.960 for all conditions except −C = 0.740 (Holm p = 0.017, r = 0.846);
+E3 cache-hit rate 0.967 (29/30), output agreement 0.933 (28/30), input cost per call
+$0.0046 (cached) vs $0.0302 (uncached).
 
-## Step 5 - Enter your API key
+## Repeat the experiment
 
-Copy this command, replace `PASTE-YOUR-KEY-HERE` with your key (it starts with `sk-ant-`), keep the quotation marks, then press Enter:
+**Option A - in Claude.ai (as in the paper).** Open `casp_runner.html` as an artifact in a
+Claude.ai conversation (for example, upload the file and ask Claude to display it as an
+artifact). Run the connection test, keep the default settings, start the run, then download
+`casp_results.jsonl` and score it:
 
-```
-$env:ANTHROPIC_API_KEY="PASTE-YOUR-KEY-HERE"
-```
-
-Check that the key was saved (it should print your key):
-
-```
-echo $env:ANTHROPIC_API_KEY
-```
-
-**Important:** the key is remembered only in this window. If you close PowerShell, repeat Step 2 and Step 5.
-
----
-
-## Step 6 - Quick test (costs less than 1 cent)
-
-```
-python run_experiment.py --probe
+```bash
+python score_runner_results.py --inp path/to/casp_results.jsonl --out results_new
+python analyze.py --results results_new
 ```
 
-- **Good result:** lines starting with `OK`.
-- **Lines starting with `ERROR`:** stop here and send the output to Claude.
+The runner calls `https://api.anthropic.com/v1/messages` without an API key, which works only
+inside a Claude.ai artifact; opened as a normal web page it cannot connect.
 
----
+**Option B - through the API.** Set `ANTHROPIC_API_KEY` and run:
 
-## Step 7 - Small trial run (about 1-2 minutes)
-
-```
-python run_experiment.py --pilot
-```
-
----
-
-## Step 8 - Full experiment (may take 1-2 hours)
-
-```
-python run_experiment.py
+```bash
+python run_experiment.py --probe      # one call per condition, checks settings
+python run_experiment.py              # defaults match the reported run: n=50, reps=1, E3 on 30 items
+python analyze.py --results results_api
 ```
 
-- You will see progress lines such as `progress 300/5100`.
-- If it stops (internet cut, window closed), repeat Step 2 and Step 5, then run the same command again. It continues from where it stopped; nothing is lost.
+Use `--out results_api` to keep API results separate from the reported run. The defaults of
+`run_experiment.py` and the enabled entry in `models.json` (`claude-sonnet-4-6`, `max_tokens`
+1000, no temperature or thinking parameter) mirror the runner. Larger designs are possible,
+for example `--n 100 --reps 3`.
 
----
+**Extending to other models.** `models.json` also contains disabled entries for Claude Haiku 4.5
+(prefill output control), GPT and Gemini. Fill in the model name, set `"enabled": true`, and set
+`OPENAI_API_KEY` or `GEMINI_API_KEY` as needed. The same items, prompts and scorer are used for
+every provider. These models were **not** evaluated in the paper.
 
-## Step 9 - Produce the tables and figures
+## Rebuilding the evaluation sets
 
-```
-python analyze.py --results results
-```
+The files in `data/` are already included. To regenerate them from the public sources, place
+the raw files in `data/raw/`:
 
----
+- `conll2003_eng_testb.txt` - https://raw.githubusercontent.com/glample/tagger/master/dataset/eng.testb
+- `conll2003_eng_train.txt` - https://raw.githubusercontent.com/glample/tagger/master/dataset/eng.train
+- `gsm8k_test.jsonl` - https://raw.githubusercontent.com/openai/grade-school-math/master/grade_school_math/data/test.jsonl
 
-## Step 10 - Package the results to send
+then run `python -m casp.datasets`. Sampling uses a fixed seed (2026).
 
-```
-Compress-Archive -Path results -DestinationPath results.zip -Force
-```
+## Notes and limitations
 
-A file named **results.zip** appears in the casp_experiment folder. Upload it to Claude in the chat.
+- One model, 50 items per task and a single repetition: run-to-run consistency was not measured,
+  and small effects cannot be excluded. See Section 5.7 of the paper.
+- T1i contains an intentionally embedded instruction; responses that obey it are counted by the
+  `injected` metric.
+- Model behaviour, API features and prices change over time; all such facts are as of September 2026.
 
----
+## Citation
 
-### Estimated cost
-
-About 15-20 US dollars in total for both models (September 2026 prices).
-
-### Never share your API key
-
-Do not paste the key into the chat or send it in any file. It stays only on your computer.
+If you use this code or data, please cite the paper (full reference to be added on publication).

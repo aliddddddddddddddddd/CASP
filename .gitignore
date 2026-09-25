@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+data/raw/
+results/analysis/
+results/raw_*.jsonl
+results/run_meta.json
+results_*/

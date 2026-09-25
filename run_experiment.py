@@ -4,7 +4,7 @@
 Examples
   python run_experiment.py --probe                      # 1 call per condition: checks API settings
   python run_experiment.py --pilot                      # n=10, reps=1 quick check
-  python run_experiment.py                              # full run: n=100, reps=3, enabled models
+  python run_experiment.py                              # full run: n=50, reps=1, E3 on 30 items (as reported)
   python run_experiment.py --models claude-sonnet-5 --tasks T2
   python run_experiment.py --models mock --out results_mock   # pipeline test only
 
@@ -24,7 +24,7 @@ from casp.datasets import DATA
 
 TASK_FILES = {"T1": "extraction.jsonl", "T1i": "extraction_injected.jsonl", "T2": "gsm8k.jsonl",
               "E3": "extraction.jsonl"}
-E3_N = 50
+E3_N = 30   # E3 uses the first 30 T1 items, as in the reported run
 
 
 def load(task, n):
@@ -70,7 +70,7 @@ def run_one(cfg, job, temperature):
     p = prompts.build(task, item, cond_name, cfg["output_mode"], cache_context=ctx)
     fn = backends.PROVIDERS[cfg["provider"]]
     kw = dict(use_cache=cache, temperature=temperature,
-              max_tokens=cfg.get("max_tokens", 1024))
+              max_tokens=cfg.get("max_tokens", 1000))
     if cfg["provider"] == "mock":
         kw["item"] = item
     try:
@@ -93,10 +93,11 @@ def main():
     ap.add_argument("--config", default="models.json")
     ap.add_argument("--models", nargs="*", help="model ids (default: all enabled)")
     ap.add_argument("--tasks", nargs="*", default=["T1", "T1i", "T2", "E3"])
-    ap.add_argument("--n", type=int, default=100)
-    ap.add_argument("--reps", type=int, default=3)
+    ap.add_argument("--n", type=int, default=50)
+    ap.add_argument("--reps", type=int, default=1)
     ap.add_argument("--workers", type=int, default=6)
-    ap.add_argument("--temperature", type=float, default=1.0)
+    ap.add_argument("--temperature", type=float, default=None,
+                    help="omit to leave it unset (API default 1.0), as in the reported run")
     ap.add_argument("--out", default="results")
     ap.add_argument("--pilot", action="store_true", help="n=10, reps=1")
     ap.add_argument("--probe", action="store_true", help="1 call per condition, print outcome")

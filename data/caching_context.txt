@@ -1,0 +1,271 @@
+ANNOTATION GUIDELINE FOR NAMED-ENTITY EXTRACTION (adapted for this study)
+
+1. Purpose. The annotator identifies every mention of a person, an organization and a
+location in a short news passage and lists each distinct surface string once.
+
+2. Persons (PER). Names of real or fictional people, including surnames used alone
+("Clinton"), full names ("Boris Yeltsin") and names with initials ("J. Smith"). Titles
+and roles ("President", "coach") are excluded unless they are part of the name string as
+written. Nationality adjectives are never persons.
+
+3. Organizations (ORG). Companies, sports clubs and national teams when they act as a
+team, political parties, government bodies, international bodies, newspapers, stock
+exchanges and universities. When a city or country name refers to a sports team in a
+match report ("Japan beat Syria"), it is annotated as it appears in the gold standard of
+the source corpus; annotators should follow context.
+
+4. Locations (LOC). Countries, cities, regions, continents, rivers, mountains, streets and
+other geographic or geopolitical places when used as places.
+
+5. Surface form. Copy the entity exactly as it appears, without adding or removing words,
+and without normalising spelling or case. List each distinct string once per category.
+
+6. Exclusions. Do not annotate dates, numbers, currencies, events, products, nationalities
+or languages (these belong to other categories that are out of scope for this task).
+
+7. Output. Return a single JSON object with the keys "persons", "organizations" and
+"locations", each an array of strings (possibly empty).
+
+
+WORKED DEMONSTRATIONS (from the CoNLL-2003 training split)
+
+<example index="1">
+<passage>Mother Teresa set up her first home for the dying in a Hindu rest house in Calcutta after she saw a penniless woman turned away by a city hospital.</passage>
+<extraction>{"persons": ["Mother Teresa"], "organizations": [], "locations": ["Calcutta"]}</extraction>
+</example>
+<example index="2">
+<passage>In 1986 Romania suffered an epidemic of the more dangerous bacterial meningitis which has killed some 15,000 people in central Africa this year.</passage>
+<extraction>{"persons": [], "organizations": [], "locations": ["Romania", "Africa"]}</extraction>
+</example>
+<example index="3">
+<passage>Nocerina's 4-3 defeat of Piacenza was also subject to a complaint, later removed, that forced their second round match against serie A newcomers Perugia to be delayed.</passage>
+<extraction>{"persons": [], "organizations": ["Nocerina", "Piacenza", "Perugia"], "locations": []}</extraction>
+</example>
+<example index="4">
+<passage>1972 - At the Olympic Games, U.S. swimmer Mark Spitz won his seventh gold medal, a record for a single Olympiad.</passage>
+<extraction>{"persons": ["Mark Spitz"], "organizations": [], "locations": ["U.S."]}</extraction>
+</example>
+<example index="5">
+<passage>Ambassador Robert Frowick, representing the Organisation for Security and Cooperation in Europe (OSCE), told reporters that municipal polls due on September 14 with other Bosnian elections would be put off.</passage>
+<extraction>{"persons": ["Robert Frowick"], "organizations": ["Organisation for Security and Cooperation in Europe", "OSCE"], "locations": []}</extraction>
+</example>
+<example index="6">
+<passage>If he survives, Muster is seeded to run into either fifth-seeded Wimbledon champion Richard Krajicek of the Netherlands or 12th-seeded American Todd Martin in the quarter-finals in Chang's half of the draw.</passage>
+<extraction>{"persons": ["Muster", "Richard Krajicek", "Todd Martin", "Chang"], "organizations": [], "locations": ["Netherlands"]}</extraction>
+</example>
+<example index="7">
+<passage>For three hours on Tuesday, around 100 members of the Maoist rebel group Shining Path took control of Alomella Robles, a small village about 345 miles (550 km) northeast of Lima, the sources said.</passage>
+<extraction>{"persons": [], "organizations": ["Shining Path"], "locations": ["Alomella Robles", "Lima"]}</extraction>
+</example>
+<example index="8">
+<passage>Gloria Bistrita (Romania) beat 2-1 (halftime 1-1) F.C. Valletta (Malta) in their Cup winners Cup match, second leg of the preliminary round, on Thursday.</passage>
+<extraction>{"persons": [], "organizations": ["Gloria Bistrita", "F.C. Valletta"], "locations": ["Romania", "Malta"]}</extraction>
+</example>
+<example index="9">
+<passage>Hansa Rostock brought Cologne's 100 percent record to an end with a 2-0 win over the Rhineside club while a Sean Dundee hat-trick inside seven minutes stood out in Karlsruhe's 4-0 demolition of St Pauli.</passage>
+<extraction>{"persons": ["Sean Dundee"], "organizations": ["Hansa Rostock", "Cologne", "Karlsruhe", "St Pauli"], "locations": []}</extraction>
+</example>
+<example index="10">
+<passage>Bonn has led efforts to ensure consumer protection tops the list of priorities in dealing with the mad cow crisis, which erupted in March when Britain acknowledged humans could contract a similar illness by eating contaminated beef.</passage>
+<extraction>{"persons": [], "organizations": [], "locations": ["Bonn", "Britain"]}</extraction>
+</example>
+<example index="11">
+<passage>The Brent crude futures market on the Singapore International Monetary Exchange (SIMEX) was closed on Monday in respect for a U.K. national holiday.</passage>
+<extraction>{"persons": [], "organizations": ["Brent", "Singapore International Monetary Exchange", "SIMEX"], "locations": ["U.K."]}</extraction>
+</example>
+<example index="12">
+<passage>The firm has signed an agreement with the Polish Development Bank (PBR) to manage the issue and plans them to be listed on the Warsaw bourse's bond market.</passage>
+<extraction>{"persons": [], "organizations": ["Polish Development Bank", "PBR"], "locations": ["Warsaw"]}</extraction>
+</example>
+<example index="13">
+<passage>Gas oil stocks fell with some cargoes arriving from the former Soviet Union, but very fast throughput to markets in Benelux, Germany and Switzerland.</passage>
+<extraction>{"persons": [], "organizations": [], "locations": ["Soviet Union", "Benelux", "Germany", "Switzerland"]}</extraction>
+</example>
+<example index="14">
+<passage>Richard Gephardt -- Gephardt, House Democratic leader, is a politician with a "Mr Clean "reputation who sought the presidency eight years ago and is widely believed to still have ambitions for the job.</passage>
+<extraction>{"persons": ["Richard Gephardt", "Gephardt", "Mr Clean"], "organizations": ["House"], "locations": []}</extraction>
+</example>
+<example index="15">
+<passage>- Building materials firm CRH refused to comment on reports that it is about to pay 180 million pounds stering for U.S. stone and concrete business Tilcon Inc.</passage>
+<extraction>{"persons": [], "organizations": ["CRH", "Tilcon Inc"], "locations": ["U.S."]}</extraction>
+</example>
+<example index="16">
+<passage>Crowds anxiously wait for his appearances, thrusting out hands for him to grip as they scream "12 more years "-- a wishful hope to eight years of Gore after a Clinton re-election.</passage>
+<extraction>{"persons": ["Gore", "Clinton"], "organizations": [], "locations": []}</extraction>
+</example>
+<example index="17">
+<passage>Scorers: Ewald Brenner (5th minute), Mario Stieglmair (42nd), Ronald Brunmayr (43rd and 56th).</passage>
+<extraction>{"persons": ["Ewald Brenner", "Mario Stieglmair", "Ronald Brunmayr"], "organizations": [], "locations": []}</extraction>
+</example>
+<example index="18">
+<passage>RTRS - Budget cuts to boost Australia savings - RBA.</passage>
+<extraction>{"persons": [], "organizations": ["RTRS", "RBA"], "locations": ["Australia"]}</extraction>
+</example>
+<example index="19">
+<passage>Advanced Medical Inc. said Monday it will buy IVAC Medical Systems Inc., a former Eli Lilly & Co.</passage>
+<extraction>{"persons": [], "organizations": ["Advanced Medical Inc.", "IVAC Medical Systems Inc.", "Eli Lilly & Co"], "locations": []}</extraction>
+</example>
+<example index="20">
+<passage>It said the military presence reflects cooperation between President Saddam Hussein and the PUK's rival, the Kurdistan Democratic Party (KDP).</passage>
+<extraction>{"persons": ["Saddam Hussein"], "organizations": ["PUK", "Kurdistan Democratic Party", "KDP"], "locations": []}</extraction>
+</example>
+<example index="21">
+<passage>The Bank of France said it allocated 13.4 billion francs to bidders offering Treasury bills as collateral, satisfying 3.4 percent of such demand.</passage>
+<extraction>{"persons": [], "organizations": ["Bank of France", "Treasury"], "locations": []}</extraction>
+</example>
+<example index="22">
+<passage>Tony Hall of Ohio said he and other Democrats who opposed abortion had always felt left out in their own party.</passage>
+<extraction>{"persons": ["Tony Hall"], "organizations": [], "locations": ["Ohio"]}</extraction>
+</example>
+<example index="23">
+<passage>Misael Valerio, head of border police at the Security Ministry, told reporters that surveillance of the country's northern border with Nicaragua has been stepped up to stop the kidnappers from fleeing Costa Rica.</passage>
+<extraction>{"persons": ["Misael Valerio"], "organizations": ["Security Ministry"], "locations": ["Nicaragua", "Costa Rica"]}</extraction>
+</example>
+<example index="24">
+<passage>Iraqi Kurdish areas bordering Iran are under the control of guerrillas of the Iraqi Kurdish Patriotic Union of Kurdistan (PUK) group.</passage>
+<extraction>{"persons": [], "organizations": ["Iraqi Kurdish Patriotic Union of Kurdistan", "PUK"], "locations": ["Iran"]}</extraction>
+</example>
+<example index="25">
+<passage>Two players have withdrawn from the Republic of Ireland squad for the 1998 World Cup qualifying match against Liechenstein on August 31, the Football Association of Ireland said in a statement on Friday.</passage>
+<extraction>{"persons": [], "organizations": ["Football Association of Ireland"], "locations": ["Republic of Ireland", "Liechenstein"]}</extraction>
+</example>
+<example index="26">
+<passage>The plantation is owned by Dutch citizen Ebe Huizinga, who has since arrived in Costa Rica to deal with the matter.</passage>
+<extraction>{"persons": ["Ebe Huizinga"], "organizations": [], "locations": ["Costa Rica"]}</extraction>
+</example>
+<example index="27">
+<passage>Rudolf Gajdos, head of Slovak Interpol, told a news conference Dutroux was also believed to have planned the kidnapping of at least one Slovak woman.</passage>
+<extraction>{"persons": ["Rudolf Gajdos", "Dutroux"], "organizations": ["Interpol"], "locations": []}</extraction>
+</example>
+<example index="28">
+<passage>The shooting occured around 6.30 a.m. (2030 GMT) on Tuesday at Glenwood, south of Maryborough, about 150 km (93 miles) north of Brisbane on the Queensland state coast.</passage>
+<extraction>{"persons": ["Maryborough"], "organizations": [], "locations": ["Glenwood", "Brisbane", "Queensland"]}</extraction>
+</example>
+<example index="29">
+<passage>Belgian international Luc Nilis scored twice on Sunday as PSV Eindhoven came from behind to beat Groningen 4-1 in Eindhoven.</passage>
+<extraction>{"persons": ["Luc Nilis"], "organizations": ["PSV Eindhoven", "Groningen"], "locations": ["Eindhoven"]}</extraction>
+</example>
+<example index="30">
+<passage>Paul Haarhuis (Netherlands) vs. Michael Joyce (U.S.)</passage>
+<extraction>{"persons": ["Paul Haarhuis", "Michael Joyce"], "organizations": [], "locations": ["Netherlands", "U.S."]}</extraction>
+</example>
+<example index="31">
+<passage>" The word is that Frowick has decided to postpone municipal elections but that he will wait for one more session of the PEC on Tuesday to take everyone's temperature on the issue. "</passage>
+<extraction>{"persons": ["Frowick"], "organizations": ["PEC"], "locations": []}</extraction>
+</example>
+<example index="32">
+<passage>" There has been a call for a general strike between one (1000 GMT) and three o'clock, "Palestinian lawmaker Ahmed Hashem Zighayer told Reuters.</passage>
+<extraction>{"persons": ["Ahmed Hashem Zighayer"], "organizations": ["Reuters"], "locations": []}</extraction>
+</example>
+<example index="33">
+<passage>Jamaican Commonwealth champion Michelle Freeman took second in 12.77 ahead of Cuban Aliuska Lopez.</passage>
+<extraction>{"persons": ["Michelle Freeman", "Aliuska Lopez"], "organizations": ["Commonwealth"], "locations": []}</extraction>
+</example>
+<example index="34">
+<passage>Iran has an estimated one million drug addicts and is a key transit route for drugs, mostly opium, smuggled to Europe through Afghanistan and Pakistan -- the so called "Golden Crescent. "</passage>
+<extraction>{"persons": [], "organizations": ["Golden Crescent"], "locations": ["Iran", "Europe", "Afghanistan", "Pakistan"]}</extraction>
+</example>
+<example index="35">
+<passage>Sakai, near the regional commercial centre of Osaka, has been hit hardest by the deadly bacteria, with nearly 6,500, mostly schoolchildren, affected by the disease.</passage>
+<extraction>{"persons": [], "organizations": [], "locations": ["Sakai", "Osaka"]}</extraction>
+</example>
+<example index="36">
+<passage>Botta, who had accompanied Puglisi to the cemetary, tried to flee the lone gunman but was caught and killed.</passage>
+<extraction>{"persons": ["Botta", "Puglisi"], "organizations": [], "locations": []}</extraction>
+</example>
+<example index="37">
+<passage>Brisbane 10.11 (71) Fremantle 10.10 (70)</passage>
+<extraction>{"persons": [], "organizations": ["Brisbane", "Fremantle"], "locations": []}</extraction>
+</example>
+<example index="38">
+<passage>One official told me ' you have to either destroy the books or return them to Amman ', "Daoud Makkawi, owner of the Nablus-based al-Risala bookshop, told Reuters.</passage>
+<extraction>{"persons": ["Daoud Makkawi"], "organizations": ["Reuters"], "locations": ["Amman", "al-Risala"]}</extraction>
+</example>
+<example index="39">
+<passage>Shares in gold miner Niugini Mining Ltd surged 38 cents to A$3.75 early on Friday following confirmation on Thursday from Battle Mountain Gold that it was considering acquiring the 49.6 percent of Niugini it did not already own.</passage>
+<extraction>{"persons": [], "organizations": ["Niugini Mining Ltd", "Battle Mountain Gold", "Niugini"], "locations": []}</extraction>
+</example>
+<example index="40">
+<passage>It said the U.S. State Department's coordinator for counter terrorism, Philip Wilcox, had expressed Washington's support for the government when he visited Colombo this week.</passage>
+<extraction>{"persons": ["Philip Wilcox"], "organizations": ["U.S. State Department"], "locations": ["Washington", "Colombo"]}</extraction>
+</example>
+<example index="41">
+<passage>Helena Sukova (Czech Republic) beat Paola Suarez (Argentina) 6- 4 7-6 (7-2)</passage>
+<extraction>{"persons": ["Helena Sukova", "Paola Suarez"], "organizations": [], "locations": ["Czech Republic", "Argentina"]}</extraction>
+</example>
+<example index="42">
+<passage>The Colorado attorney general told Lloyd's last week it was considering a new legal action against the British insurance market, based on allegations of consumer fraud.</passage>
+<extraction>{"persons": [], "organizations": ["Lloyd's"], "locations": ["Colorado"]}</extraction>
+</example>
+<example index="43">
+<passage>Last week's submissions to the commission by the ANC, de Klerk's National Party and the right-wing Freedom Front of General Constand Viljoen left many South Africans unsatisfied.</passage>
+<extraction>{"persons": ["de Klerk", "Constand Viljoen"], "organizations": ["ANC", "National Party", "Freedom Front"], "locations": []}</extraction>
+</example>
+<example index="44">
+<passage>" My prediction is that the Names will appeal, "said Kenneth Chiate, a U.S. Name and a chief negotiator for the American Names Association.</passage>
+<extraction>{"persons": ["Kenneth Chiate"], "organizations": ["American Names Association"], "locations": ["U.S."]}</extraction>
+</example>
+<example index="45">
+<passage>Popov told NTV television on Sunday he was in no danger and promised he would be back in the pool shortly. "</passage>
+<extraction>{"persons": ["Popov"], "organizations": ["NTV"], "locations": []}</extraction>
+</example>
+<example index="46">
+<passage>He returned to the Kremlin on Thursday after a two-day break in the lakelands of northwestern Russia.</passage>
+<extraction>{"persons": [], "organizations": [], "locations": ["Kremlin", "Russia"]}</extraction>
+</example>
+<example index="47">
+<passage>Although Espinho's Nail Besirovic put the home side back on terms in the 35th minute, Sporting quickly restored their lead.</passage>
+<extraction>{"persons": ["Nail Besirovic"], "organizations": ["Espinho", "Sporting"], "locations": []}</extraction>
+</example>
+<example index="48">
+<passage>The CVG's aluminum companies Venalum and Alucasa are also scheduled to be sold early 1997.</passage>
+<extraction>{"persons": [], "organizations": ["CVG", "Venalum", "Alucasa"], "locations": []}</extraction>
+</example>
+<example index="49">
+<passage>15 - Gabriela Sabatini (Argentina) beat Ann Grossman (U.S.) 6-2 6 - 3</passage>
+<extraction>{"persons": ["Gabriela Sabatini", "Ann Grossman"], "organizations": [], "locations": ["Argentina", "U.S."]}</extraction>
+</example>
+<example index="50">
+<passage>12 - Todd Martin (U.S.) vs. Younnes El Aynaoui (Morocco)</passage>
+<extraction>{"persons": ["Todd Martin", "Younnes El Aynaoui"], "organizations": [], "locations": ["U.S.", "Morocco"]}</extraction>
+</example>
+<example index="51">
+<passage>Iran has asked Germany to extradite its former president Abolhassan Banisadr for alleged hijacking, an Iranian embassy spokesman said on Wednesday.</passage>
+<extraction>{"persons": ["Abolhassan Banisadr"], "organizations": [], "locations": ["Iran", "Germany"]}</extraction>
+</example>
+<example index="52">
+<passage>292 Wayne Westner (South Africa) 77 68 73 74, Sven Struver (</passage>
+<extraction>{"persons": ["Wayne Westner", "Sven Struver"], "organizations": [], "locations": ["South Africa"]}</extraction>
+</example>
+<example index="53">
+<passage>2 - Conchita Martinez (Spain) beat Nathalie Tauziat (France)</passage>
+<extraction>{"persons": ["Conchita Martinez", "Nathalie Tauziat"], "organizations": [], "locations": ["Spain", "France"]}</extraction>
+</example>
+<example index="54">
+<passage>Other polls also showed a strong Dole bounce after San Diego but Clinton then rebuilding his lead.</passage>
+<extraction>{"persons": ["Dole", "Clinton"], "organizations": [], "locations": ["San Diego"]}</extraction>
+</example>
+<example index="55">
+<passage>" This treaty is both necessary and good, "Nastase said, adding that the PUNR's stance was threatening its position in the government.</passage>
+<extraction>{"persons": ["Nastase"], "organizations": ["PUNR"], "locations": []}</extraction>
+</example>
+<example index="56">
+<passage>Liam Botham demonstrated his father Ian's golden touch on Wednesday shortly after making his county debut for Hampshire.</passage>
+<extraction>{"persons": ["Liam Botham", "Ian"], "organizations": ["Hampshire"], "locations": []}</extraction>
+</example>
+<example index="57">
+<passage>" They will surrender the passengers there and surrender themselves, "police spokesman Glafcos Xenos told reporters at Cyprus's Larnaca airport.</passage>
+<extraction>{"persons": ["Glafcos Xenos"], "organizations": [], "locations": ["Cyprus", "Larnaca"]}</extraction>
+</example>
+<example index="58">
+<passage>Klas Eriksson (Sweden) 71 75 72, Mike Clayton (Australia)</passage>
+<extraction>{"persons": ["Klas Eriksson", "Mike Clayton"], "organizations": [], "locations": ["Sweden", "Australia"]}</extraction>
+</example>
+<example index="59">
+<passage>Danish driver Karsten Richardt had ploughed into the crowd during the two-kilometre first stage held in the host city of Jyvaskyla.</passage>
+<extraction>{"persons": ["Karsten Richardt"], "organizations": [], "locations": ["Jyvaskyla"]}</extraction>
+</example>
+<example index="60">
+<passage>Hurricane Edouard grew stronger on Saturday as it swirled across the Atlantic Ocean, but forecasters at the National Hurricane Center said the storm would likely swing north and miss the Caribbean.</passage>
+<extraction>{"persons": [], "organizations": ["National Hurricane Center"], "locations": ["Atlantic Ocean", "Caribbean"]}</extraction>
+</example>
