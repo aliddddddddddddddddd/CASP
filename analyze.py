@@ -245,7 +245,7 @@ def main():
             sm = s[s["model"] == m].set_index("condition").reindex(conds)
             ax.bar(x + k * w - 0.4 + w / 2, sm["injected"], w, color=colors[k % 10], label=m)
         ax.set_xticks(x); ax.set_xticklabels([COND_LABEL[c] for c in conds], rotation=35, ha="right")
-        ax.set_ylabel("Share of responses obeying the embedded instruction"); ax.grid(axis="y", alpha=0.3)
+        ax.set_ylabel("Share of responses containing\nthe payload token"); ax.grid(axis="y", alpha=0.3)
         ax.set_title("T1i: instruction/data separation (lower is better)", fontsize=9); ax.legend(fontsize=7)
         fig.tight_layout(); fig.savefig(os.path.join(out, "Fig_injection.png"), dpi=300); plt.close(fig)
 
