@@ -59,6 +59,7 @@ Requires Python 3.10+.
 pip install -r requirements.txt
 python score_runner_results.py        # results/casp_results.jsonl -> results/raw_claude-sonnet-4-6.jsonl
 python analyze.py --results results   # writes results/analysis/
+python prose_parse.py                 # post-hoc parse of B0 prose answers (Section 5.1)
 ```
 
 `results/analysis/` then contains `summary.csv` (Table 6), `stats.csv` (Table 7),
